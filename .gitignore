@@ -1,2 +1,3 @@
-neuralnets/X_data.npy
-neuralnets/Y_data.npy
+.venv
+src/neural/X_data.npy
+src/neural/Y_data.npy

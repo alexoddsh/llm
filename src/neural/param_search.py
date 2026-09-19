@@ -1,21 +1,25 @@
 import multiprocessing
 import queue
+
 import numpy as np
-from nn4 import Network
+
+from .nn4 import Network
+
 
 def train_network(X, Y, config, result_queue, training_on):
     model = Network(X, Y, layers=config["layers"], lr=config["lr"], name=config["name"])
     model.run(result_queue.put, training_on)
 
+
 def main():
-    multiprocessing.set_start_method('fork')
+    multiprocessing.set_start_method("fork")
     X = np.load("X_data.npy")
     Y = np.load("Y_data.npy")
-    
+
     configs = [
-        {'layers': [784, 256, 128, 10], 'lr': 0.001, "name": 1},
-        {'layers': [784, 512, 256, 10], 'lr': 0.001, "name": 2},
-        {'layers': [784, 256, 128, 10], 'lr': 0.0001, "name": 3},
+        {"layers": [784, 256, 128, 10], "lr": 0.001, "name": 1},
+        {"layers": [784, 512, 256, 10], "lr": 0.001, "name": 2},
+        {"layers": [784, 256, 128, 10], "lr": 0.0001, "name": 3},
     ]
 
     training_on = multiprocessing.Event()
@@ -27,7 +31,7 @@ def main():
 
     for p in processes:
         p.start()
-    
+
     while training_on.is_set():
         try:
             name, epoch, batch, loss, accuracy = result_queue.get_nowait()
@@ -38,7 +42,7 @@ def main():
             print(f"Acc: {accuracy:,.2%}")
         except queue.Empty:
             pass
-    
+
+
 if __name__ == "__main__":
     main()
-
